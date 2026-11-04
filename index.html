@@ -194,153 +194,23 @@ td.muted { color: var(--muted); font-size: .85rem; }
   <nav role="tablist" id="tabs"></nav>
   <main class="list" id="list"></main>
 </div>
+<script src="config.js"></script>
 <script>
-const GYM = {
-  lun: { name: "Lun", full: "Lunedì", items: [
-    { id: "l-chestpress", n: "Chest press", s: "3×8", v: [["Chest press", "chest press machine esecuzione corretta"]] },
-    { id: "l-chestfly", n: "Chest fly", s: "2×8", v: [["Chest fly", "chest fly machine pec deck esecuzione"]] },
-    { id: "l-pushdips", n: "Push up + dips", s: "6/8 + max", v: [["Push up", "push up esecuzione corretta"], ["Dips", "dips parallele esecuzione corretta"]] },
-    { id: "l-ohext", n: "Overhead extension", note: "tricipite", s: "3×8/10", v: [["Video", "overhead triceps extension cable"]] },
-    { ss: [
-      { id: "l-alzlat", n: "Alzate laterali", s: "3×10/12", v: [["Video", "alzate laterali manubri esecuzione corretta"]] },
-      { id: "l-panca60", n: "Panca 60 alzate verticali", note: "gomito sotto spalla a 90°", s: "2×8", v: [["Video", "incline bench 60 degree dumbbell shoulder press"]] }
-    ]},
-    { id: "l-addome", n: "Addome isometrie", note: "tenuta 8 sec · 2,5 kg", s: "12 reps", v: [["Video", "weighted isometric crunch hold"]] },
-    { id: "l-plank", n: "Plank + uovo", note: "prisoner v-ups", s: "10 reps", v: [["Plank", "plank esecuzione corretta"], ["Prisoner v-up", "prisoner v up abs exercise"]] }
-  ]},
-  mer: { name: "Mer", full: "Mercoledì", items: [
-    { id: "m-stacco", n: "Stacco", note: "6 all'80%, poi 3×6", s: "6 + 3×6", v: [["Video", "stacco da terra esecuzione corretta"]] },
-    { id: "m-legcurl", n: "Leg curl sdraiato", s: "3×8/10", v: [["Video", "lying leg curl machine form"]] },
-    { id: "m-legpress", n: "Leg press piedi in alto", s: "3×10", v: [["Video", "leg press piedi alti glutei"]] },
-    { ss: [
-      { id: "m-lat", n: "Lat machine", s: "3×8", v: [["Video", "lat machine esecuzione corretta"]] },
-      { id: "m-vrow", n: "V row", s: "3×8", v: [["Video", "seated cable row v grip form"]] }
-    ]},
-    { id: "m-curlcavo", n: "Curl cavo basso", s: "3×8", v: [["Video", "curl bicipiti cavo basso esecuzione"]] },
-    { id: "m-panca30bic", n: "Panca 30 bicipiti", s: "3×8", v: [["Video", "incline dumbbell curl form"]] }
-  ]},
-  ven: { name: "Ven", full: "Venerdì", items: [
-    { id: "v-panca30", n: "Panca 30 spinte in alto", s: "3×8", v: [["Video", "incline dumbbell press 30 degrees form"]] },
-    { id: "v-chestfly", n: "Chest fly", s: "3×8", v: [["Video", "chest fly machine pec deck esecuzione"]] },
-    { id: "v-military", n: "Military press", s: "3×10", v: [["Video", "military press bilanciere esecuzione corretta"]] },
-    { id: "v-alzlat60", n: "Alzate laterali panca 60", s: "3×8", v: [["Video", "incline bench lateral raise"]] },
-    { ss: [
-      { id: "v-pushdown", n: "Push down", note: "tricipiti", s: "3×8", v: [["Video", "triceps pushdown cavo esecuzione"]] },
-      { id: "v-french", n: "Tricipiti panca piana EZ", note: "french press", s: "3×8", v: [["Video", "french press bilanciere ez panca piana"]] }
-    ]},
-    { id: "v-hanging", n: "Hanging knee to chest", s: "2×max", v: [["Video", "hanging knee raise form"]] },
-    { id: "v-plankobl", n: "Plank obliquo + barchetta", note: "45s + 30s, fino a 1 min", s: "tempo", v: [["Plank obliquo", "side plank esecuzione"], ["Barchetta", "hollow body hold esercizio"]] }
-  ]},
-  sab: { name: "Sab", full: "Sabato", items: [
-    { id: "s-pressa", n: "Pressa piedi in basso / squat", note: "squat: 2×6/8 + 1×8/10", s: "3×8", v: [["Pressa", "leg press piedi bassi quadricipiti"], ["Squat", "squat bilanciere esecuzione corretta"]] },
-    { id: "s-legext", n: "Leg extension", s: "4×8", v: [["Video", "leg extension esecuzione corretta"]] },
-    { id: "s-bulgarian", n: "Bulgarian squat", s: "4×6", v: [["Video", "bulgarian split squat form"]] },
-    { id: "s-pulley", n: "Pulley cavo / row T-bar", s: "3×8", v: [["Pulley", "pulley basso esecuzione corretta"], ["T-bar row", "t bar row form"]] },
-    { id: "s-rematore", n: "Rematore bilanciere", note: "focus gran dorsale", s: "3×6+", v: [["Video", "rematore bilanciere gran dorsale"]] },
-    { id: "s-trazioni", n: "Trazioni presa supina", note: "bicipiti", s: "max", v: [["Video", "chin up presa supina esecuzione"]] },
-    { id: "s-curlhammer", n: "Curl to hammer curl", note: "3 sec in discesa", s: "4×8", v: [["Video", "curl to hammer curl"]] },
-    { id: "s-addome", n: "Addome isometrie", note: "tenuta 8 sec · 2,5 kg", s: "12 reps", v: [["Video", "weighted isometric crunch hold"]] },
-    { id: "s-plank", n: "Plank + uovo", note: "prisoner v-ups", s: "10 reps", v: [["Plank", "plank esecuzione corretta"], ["Prisoner v-up", "prisoner v up abs exercise"]] }
-  ]}
-};
-
-const g = (s) => s.split("|").map((x) => { const i = x.lastIndexOf(" "); const m = x.match(/^(.*?)\s+(\d[\d,.]*\s*(?:g|cucchiai|cucchiaino|uova|banana|mela|pera|kiwi|pesca|arancia|mozzarella)|\d+\s*\w+)$/); return m ? [m[1], m[2]] : [x, ""]; });
-const CEREALI40 = "Fiocchi d'avena 40 g|Muesli 40 g|Corn Flakes integrali 40 g|All-Bran 40 g|Granola 40 g";
-const YOG5 = "Yogurt greco 5 cucchiai|Yogurt greco 0% grassi 150 g|Quark 150 g|Ricotta vaccina 150 g|Yogurt intero bianco 150 g";
-const DOLCE = "Miele 1 cucchiaino|Marmellata 15 g|Sciroppo d'acero 10 g|Crema di nocciole 100% 10 g|Confettura di frutta 15 g";
-const PROT = ["Petto di pollo 200 g", "Salmone 200 g", "Tonno al naturale 160 g", "Bistecca di manzo 200 g", "Merluzzo 250 g", "Orata 200 g", "Petto di tacchino 200 g"];
-const protFirst = (n) => [PROT.find((p) => p.startsWith(n)), ...PROT.filter((p) => !p.startsWith(n))].join("|");
-const VERD = (first) => { const v = ["Zucchine", "Melanzane", "Spinaci", "Broccoli", "Fagiolini", "Cavolfiore", "Lattuga"]; return [first, ...v.filter((x) => x !== first)].map((x) => x + " 200 g").join("|"); };
-const OLIO = "Olio extravergine d'oliva 2 cucchiai";
-const PANE = "Pane comune 40 g|Pane integrale 40 g|Pane di segale 40 g|Crackers 25 g|Gallette di riso 30 g|Grissini 30 g";
-const PRIMO70 = "Pasta 70 g|Riso 70 g|Farro 70 g|Orzo perlato 70 g|Pasta integrale 70 g|Riso integrale 70 g|Gnocchi di patate 150 g";
-const FRUTTA = "Banana 1 banana|Mela 1 mela|Pera 1 pera|Kiwi 2 kiwi|Pesca 1 pesca";
-
-const FOOD = {
-  riposo: { name: "Riposo", sub: "Non attività", full: "Giorno di NON attività", meals: [
-    { id: "col", n: "Colazione", h: "07:00", items: [CEREALI40, YOG5, DOLCE] },
-    { id: "pra", n: "Pranzo", h: "12:30", items: [protFirst("Petto di pollo"), VERD("Zucchine"), OLIO, PANE] },
-    { id: "spu", n: "Spuntino pomeridiano", h: "16:30", items: [FRUTTA] },
-    { id: "cen", n: "Cena", h: "20:00", note: "Primo + secondo + verdure", items: [PRIMO70,
-      "Tonno al naturale 150 g|Petto di pollo 150 g|Merluzzo 200 g|Uova intere 3 uova|Fagioli borlotti 200 g|Bresaola 100 g|Mozzarella 1 mozzarella",
-      VERD("Spinaci"), OLIO] }
-  ]},
-  corsa: { name: "Corsa", sub: "serale", full: "Corsa serale", meals: [
-    { id: "col", n: "Colazione", h: "07:30", items: [CEREALI40 + "|Farro soffiato 40 g", YOG5, DOLCE] },
-    { id: "pra", n: "Pranzo", h: "12:30", note: "C'è un primo piatto (e anche un secondo)", items: [protFirst("Salmone"), VERD("Zucchine"), OLIO,
-      "Riso 80 g|Riso brillato 80 g|Pasta di semola 80 g|Orzo perlato 80 g|Farro perlato 80 g|Quinoa 80 g|Riso integrale 80 g|Pasta integrale 80 g|Couscous 80 g|Gnocchi di patate 160 g|Tortellini freschi 90 g|Trofie fresche Esselunga 100 g"] },
-    { id: "spu", n: "Spuntino pomeridiano", h: "16:30", note: "2 frutti medi", items: [
-      "Banana 1 banana|Mela 1 mela|Pera 1 pera|Arancia 1 arancia|Kiwi 2 kiwi|Pesca 1 pesca|Mandarini 200 g",
-      "Mela (o altro frutto medio) 200 g"] },
-    { id: "cen", n: "Cena", h: "20:00", items: [PRIMO70,
-      "Uova intere 3 uova|Tonno al naturale 150 g|Petto di pollo 150 g|Merluzzo 200 g|Fagioli borlotti 200 g|Bresaola 100 g|Mozzarella 1 mozzarella",
-      VERD("Spinaci"), OLIO] },
-    { id: "ser", n: "Spuntino serale", h: "22:00", items: ["Yogurt alla frutta 125 g"] }
-  ]},
-  pesi: { name: "Pesi", sub: "mattino", full: "Pesi mattino", meals: [
-    { id: "col", n: "Colazione", h: "07:30", note: "Cereali un po' di più", items: [
-      "Fiocchi d'avena 60 g|Muesli 60 g|Corn Flakes integrali 60 g|All-Bran 60 g|Granola 60 g|Farro soffiato 60 g",
-      "Yogurt greco 7 cucchiai|Yogurt greco 0% grassi 200 g|Quark 200 g|Ricotta vaccina 200 g",
-      "Miele 1 cucchiaino|Marmellata 15 g|Sciroppo d'acero 10 g|Zucchero di canna 10 g|Crema di nocciole 100% 10 g|Confettura di frutta 15 g"] },
-    { id: "pra", n: "Pranzo", h: "12:30", items: [protFirst("Bistecca di manzo"), VERD("Zucchine"), OLIO, PANE,
-      "Grana Padano DOP 30 g|Mozzarella 50 g|Ricotta di vacca 50 g"] },
-    { id: "spu", n: "Spuntino pomeridiano", h: "16:30", items: [FRUTTA] },
-    { id: "cen", n: "Cena", h: "20:00", items: [PRIMO70,
-      "Merluzzo 200 g|Tonno al naturale 150 g|Petto di pollo 150 g|Uova intere 3 uova|Salmone 120 g|Fagioli borlotti 200 g|Bresaola 100 g",
-      VERD("Spinaci"), OLIO] },
-    { id: "ser", n: "Spuntino serale", h: "22:00", items: ["Yogurt alla frutta 125 g"] }
-  ]}
-};
-for (const d of Object.values(FOOD)) for (const m of d.meals) m.items = m.items.map(g);
-
-const SHOP = [
-  ["Cereali e derivati", "Fiocchi d'avena, Muesli, Corn Flakes integrali, All-Bran, Granola, Farro soffiato, Pane comune, Pane integrale, Pane di segale, Crackers, Gallette di riso, Grissini, Pasta, Pasta integrale, Riso, Riso integrale, Farro, Orzo perlato, Quinoa, Couscous"],
-  ["Pasta fresca", "Gnocchi di patate, Tortellini freschi, Trofie fresche Esselunga"],
-  ["Verdura", "Zucchine, Spinaci, Broccoli, Melanzane, Fagiolini, Cavolfiore, Lattuga"],
-  ["Frutta", "Banana, Mela, Pera, Kiwi, Pesca, Arancia, Mandarini"],
-  ["Carne", "Petto di pollo, Petto di tacchino, Bistecca di manzo, Bresaola"],
-  ["Pesce", "Salmone, Merluzzo, Orata, Tonno al naturale"],
-  ["Uova e legumi", "Uova, Fagioli borlotti"],
-  ["Latticini", "Yogurt greco, Yogurt alla frutta, Quark, Ricotta, Mozzarella, Grana Padano DOP"],
-  ["Dispensa", "Olio extravergine d'oliva, Miele, Marmellata, Confettura di frutta, Sciroppo d'acero, Zucchero di canna, Crema di nocciole 100%"]
-];
-const TIPS = [
-  "Acqua: 2–2,5 litri al giorno.",
-  "I pesi sono a crudo. Frutta e verdura non serve pesarle.",
-  "Verdura: puoi mangiarne di più e anche di altri tipi, pure in mix (es. lattuga + pomodori).",
-  "Pasti liberi (facoltativi): massimo 2 a settimana.",
-  "Condimenti: tranne l'olio, il resto è libero e facoltativo. Spezie libere.",
-  "Cerca di ruotare le diverse alternative dei cibi."
-];
-
-// ---------- Corsa: blocco base di 8 settimane (tecnica, fiato, resistenza), 2 sedute ----------
-// Da gennaio si passa al lavoro specifico Hyrox.
-const RUN = {
-  A: { name: "Tecnica e ritmo", when: "Martedì", warm: "Riscaldamento: 10' facili + esercizi di tecnica (skip, calciata, corsa balzata: 2 × 20 m ciascuno) + 4 allunghi da 80 m. Alla fine 5' di defaticamento.",
-    v: [["Esercizi di tecnica", "esercizi tecnica di corsa skip calciata"], ["Allunghi", "allunghi corsa come si fanno"]],
-    weeks: [
-      { t: "8 × 1' svelto / 1' piano", d: "Svelto = ritmo che tieni a fatica per 1 minuto ma con passo leggero e rilassato. Piano = corsa lentissima, non fermarti. Poi corsa facile fino a circa 5 km." },
-      { t: "10 × 1' svelto / 1' piano", d: "Come la settimana scorsa con due ripetute in più. Cura la postura: busto dritto, braccia rilassate, passi corti e veloci." },
-      { t: "Salite: 6 × 30\" forte", d: "Trova una salita media. 30\" in spinta con ginocchia alte, ritorno camminando. Poi 2 km facili. Migliora forza ed economia della corsa.", v: [["Salite", "ripetute in salita corsa tecnica"]] },
-      { t: "5 km facili + 6 allunghi · scarico", d: "Settimana leggera: corsa facile e alla fine 6 allunghi da 80 m in scioltezza." },
-      { t: "5 × 3' medio-forte / 2' piano", d: "Medio-forte = riesci a dire poche parole. Tieni lo stesso ritmo in tutte e 5." },
-      { t: "Salite: 8 × 30\" forte", d: "Come la settimana 3 con due salite in più, poi 2 km facili.", v: [["Salite", "ripetute in salita corsa tecnica"]] },
-      { t: "4 × 1 km a ritmo sostenuto / 2' piano", d: "Ritmo sostenuto = il ritmo che terresti per 10 km. Segna la media per km della parte veloce." },
-      { t: "Test: 5 km costanti al massimo", d: "Dopo il riscaldamento corri 5 km al ritmo più veloce che riesci a tenere uguale fino alla fine. Confrontalo con i tuoi 5 km di adesso." }
-    ]},
-  B: { name: "Fondo", when: "Giovedì o domenica", warm: "Parti piano i primi 5'. Facile = riesci a parlare mentre corri: è qui che costruisci la resistenza.",
-    v: [["Corsa facile (zona 2)", "corsa zona 2 come allenarsi"]],
-    weeks: [
-      { t: "5 km facili", d: "Ritmo da chiacchierata, anche se ti sembra lento. Costruisce il fiato senza stancarti per la palestra." },
-      { t: "6 km facili", d: "Un km in più, sempre facile." },
-      { t: "5 km progressivi", d: "Ogni km un po' più veloce del precedente; l'ultimo a ritmo sostenuto." },
-      { t: "5 km facili · scarico", d: "Settimana leggera." },
-      { t: "7 km facili", d: "Ritmo da chiacchierata per tutta la corsa." },
-      { t: "6 km: 4 facili + 2 medio-forti", d: "Gli ultimi 2 km più veloci, ma senza arrivare sfinito." },
-      { t: "8 km facili", d: "La corsa più lunga del blocco: ritmo tranquillo, bevi prima di uscire." },
-      { t: "6 km facili", d: "Recupero. Da gennaio si passa all'allenamento specifico Hyrox." }
-    ]}
-};
+// ---------- Contenuti dal file config.js del cliente ----------
+const APP = CONFIG.app || {};
+const GYM = CONFIG.gym || {};
+const RUN = CONFIG.run && Object.keys(CONFIG.run).length ? CONFIG.run : null;
+const RUN_INFO = CONFIG.runInfo || {};
+const FOOD_CFG = CONFIG.food || null;
+const g = (s) => s.split("|").map((x) => { const m = x.trim().match(/^(.*?)\s+(\d[\d,.]*\s*(?:g|ml|cucchiai|cucchiaino|uova|uovo|banana|mela|pera|kiwi|pesca|arancia|mozzarella|fette|fetta|vasetto)|\d+\s*\w+)$/); return m ? [m[1], m[2]] : [x.trim(), ""]; });
+const FOOD = FOOD_CFG ? FOOD_CFG.plans : { riposo: { name: "", sub: "", meals: [] } };
+for (const d of Object.values(FOOD)) for (const m of d.meals) m.items = m.items.map((x) => typeof x === "string" ? g(x) : x);
+const SHOP = (FOOD_CFG && FOOD_CFG.shop) || [];
+const TIPS = (FOOD_CFG && FOOD_CFG.tips) || [];
+const HAS = { gym: Object.keys(GYM).length > 0, run: !!RUN, food: !!FOOD_CFG };
+const RUN_LEN = RUN ? Math.max(...Object.values(RUN).map((x) => x.weeks.length)) : 1;
+const foodType = (t) => FOOD[t] ? t : Object.keys(FOOD)[0];
+document.title = APP.name || "Allenamento";
 
 // ---------- Helpers ----------
 const $ = (id) => document.getElementById(id);
@@ -378,10 +248,12 @@ function fmtPace(sec) { if (!sec || !isFinite(sec)) return "–"; sec = Math.rou
 
 const GYM_EX = {};   // exId -> { ex, dayKey }
 for (const [dk, d] of Object.entries(GYM)) for (const it of d.items) for (const ex of (it.ss || [it])) GYM_EX[ex.id] = { ex, dayKey: dk };
-const GYM_WD = { 1: "lun", 3: "mer", 5: "ven", 6: "sab" };
+const WDN = { dom: 0, lun: 1, mar: 2, mer: 3, gio: 4, ven: 5, sab: 6 };
+const GYM_WD = Object.fromEntries(Object.keys(GYM).filter((k) => k in WDN).map((k) => [WDN[k], k]));
 
 // ---------- Data (stesse chiavi delle due app precedenti, così i dati già salvati restano) ----------
-const K = { gym: "scheda-logs", run: "corsa-logs", diet: "dieta-days", shop: "dieta-spesa", meta: "allenamento-sync", runStart: "corsa-inizio" };
+const NS = CONFIG.id ? CONFIG.id + "-" : "";
+const K = { gym: NS + "scheda-logs", run: NS + "corsa-logs", diet: NS + "dieta-days", shop: NS + "dieta-spesa", meta: NS + "allenamento-sync", runStart: NS + "corsa-inizio" };
 function load(k, def) { try { return JSON.parse(localStorage.getItem(k) || "") || def; } catch (e) { return def; } }
 const G = load(K.gym, {});     // exId -> { date: { r, kg, t } }
 const R = load(K.run, {});     // date -> { s: "A"|"B"|"X", km, time, split, rpe, note, t }
@@ -414,18 +286,18 @@ function gymDates(GG) { const s = new Set(); for (const h of Object.values(GG)) 
 
 // ---------- Alimentazione: tipo di giornata automatico ----------
 function autoType(key, GG = G, RR = R) {
-  for (const h of Object.values(GG)) if (hasG(h[key])) return ["pesi", "hai segnato la palestra"];
-  if (hasR(RR[key])) return ["corsa", "hai segnato una corsa"];
+  const t = (k, why) => [foodType(k), why];
+  for (const h of Object.values(GG)) if (hasG(h[key])) return t("pesi", "hai segnato la palestra");
+  if (hasR(RR[key])) return t("corsa", "hai segnato una corsa");
   const wd = weekday(key);
-  if (GYM_WD[wd]) return ["pesi", "oggi è giorno di palestra"];
-  if (wd === 2) return ["corsa", "martedì è giorno di corsa"];
-  if (wd === 4) return ["corsa", "giovedì è giorno di corsa"];
-  return ["riposo", "nessun allenamento previsto"];
+  if (GYM_WD[wd]) return t("pesi", "oggi è giorno di palestra");
+  if (RUN && Object.values(RUN).some((x) => (x.wd || []).includes(wd))) return t("corsa", "oggi è giorno di corsa");
+  return t("riposo", "nessun allenamento previsto");
 }
 function dietDay(key, DD = D, GG = G, RR = R) {
   const d = DD[key] || { meals: {}, water: 0, t: 0 };
   const [auto, why] = autoType(key, GG, RR);
-  return { ...d, type: d.type || auto, auto: !d.type, why };
+  return { ...d, type: foodType(d.type || auto), auto: !d.type, why };
 }
 function touchDiet(key, patch) {
   const cur = D[key] || { meals: {}, water: 0, t: 0 };
@@ -434,16 +306,21 @@ function touchDiet(key, patch) {
 }
 
 // ---------- Navigation ----------
-const TABS = { palestra: "Palestra", corsa: "Corsa", cibo: "Cibo", stats: "Stats" };
+const TABS = {};
+if (HAS.gym) TABS.palestra = "Palestra";
+if (HAS.run) TABS.corsa = "Corsa";
+if (HAS.food) TABS.cibo = "Cibo";
+TABS.stats = "Stats";
 const dateEl = $("date");
 dateEl.value = todayKey();
 let tab, gymDay, foodSub = "pasti", runWeekOffset = 0, chartEx = null;
 function defaults(key) {
   const wd = weekday(key);
   gymDay = GYM_WD[wd] || nextGymDay(key);
-  return GYM_WD[wd] ? "palestra" : (wd === 2 || wd === 4) ? "corsa" : "cibo";
+  const want = GYM_WD[wd] ? "palestra" : RUN && Object.values(RUN).some((x) => (x.wd || []).includes(wd)) ? "corsa" : "cibo";
+  return TABS[want] ? want : Object.keys(TABS)[0];
 }
-function nextGymDay(key) { for (let i = 0; i < 7; i++) { const k = GYM_WD[weekday(addDays(key, i))]; if (k) return k; } return "lun"; }
+function nextGymDay(key) { for (let i = 0; i < 7; i++) { const k = GYM_WD[weekday(addDays(key, i))]; if (k) return k; } return Object.keys(GYM)[0]; }
 const h0 = location.hash.slice(1);
 tab = defaults(dateEl.value);
 if (TABS[h0]) tab = h0;
@@ -540,7 +417,7 @@ function runPrev(sess, before) {
 }
 function paceOf(e) { const sec = parseTime(e.time), km = kgNum(e.km); return sec && km ? sec / km : null; }
 function runCard(sess, wk) {
-  const P = RUN[sess], w = P.weeks[((wk % 8) + 8) % 8];
+  const P = RUN[sess], w = P.weeks[((wk % P.weeks.length) + P.weeks.length) % P.weeks.length];
   const key = dateEl.value, cur = R[key] && R[key].s === sess ? R[key] : {};
   const other = R[key] && hasR(R[key]) && R[key].s !== sess;
   const prev = runPrev(sess, key);
@@ -549,7 +426,7 @@ function runCard(sess, wk) {
   el.innerHTML = `
     <div class="card-top">
       <div class="card-name">${esc(P.name)}<div class="sub">${esc(P.when)}</div></div>
-      <span class="scheme run">${sess === "A" ? "Seduta 1" : "Seduta 2"}</span>
+      <span class="scheme run">Seduta ${Object.keys(RUN).indexOf(sess) + 1}</span>
     </div>
     <div class="workout"><b>${esc(w.t)}</b><div>${esc(w.d)}</div><div class="sub">${esc(P.warm)}</div></div>
     ${vids([...(w.v || []), ...P.v])}
@@ -558,7 +435,7 @@ function runCard(sess, wk) {
       <label>Km totali<input id="km-${sess}" inputmode="decimal" autocomplete="off" placeholder="es. 5" value="${esc(cur.km || "")}"></label>
       <label>Tempo totale<input id="time-${sess}" inputmode="numeric" autocomplete="off" placeholder="es. 27:30" value="${esc(cur.time || "")}"></label>
       <label>Fatica 1–10<input id="rpe-${sess}" inputmode="numeric" autocomplete="off" placeholder="es. 7" value="${esc(cur.rpe || "")}"></label>
-      ${sess === "A" ? `<label class="wide">Ritmo della parte veloce (min/km, se lo sai)<input id="split-A" inputmode="numeric" autocomplete="off" placeholder="es. 4:45" value="${esc(cur.split || "")}"></label>` : ""}
+      ${P.split ? `<label class="wide">${esc(P.split)}<input id="split-${sess}" inputmode="numeric" autocomplete="off" placeholder="es. 4:45" value="${esc(cur.split || "")}"></label>` : ""}
     </div>
     <div class="prev" id="pace-${sess}">${cur.km && cur.time ? "Ritmo medio: <b>" + fmtPace(paceOf(cur)) + " /km</b>" : ""}</div>
     <div class="prev">${prev ? `Ultima volta (${fmtDate(prev[0])}): <b>${esc(prev[1].km || "–")} km</b> in <b>${esc(prev[1].time || "–")}</b>${paceOf(prev[1]) ? " · " + fmtPace(paceOf(prev[1])) + " /km" : ""}${prev[1].split ? " · parte veloce " + esc(prev[1].split) + " /km" : ""}` : "Nessuna seduta precedente"}</div>`;
@@ -578,18 +455,17 @@ function runCard(sess, wk) {
 function renderRun() {
   const list = $("list");
   const wk = runWeekIndex(dateEl.value) + runWeekOffset;
-  const n = ((wk % 8) + 8) % 8;
+  const n = ((wk % RUN_LEN) + RUN_LEN) % RUN_LEN;
   list.innerHTML = `
     <section class="panel">
       <div class="panel-head">
         <button class="btn ghost small" id="wkPrev" aria-label="Settimana precedente">◀</button>
-        <div class="center"><h2>Settimana ${n + 1} di 8</h2><div class="sub">${runWeekOffset ? (runWeekOffset > 0 ? "+" : "") + runWeekOffset + " rispetto a questa" : "questa settimana"} · base fino a gennaio</div></div>
+        <div class="center"><h2>Settimana ${n + 1} di ${RUN_LEN}</h2><div class="sub">${runWeekOffset ? (runWeekOffset > 0 ? "+" : "") + runWeekOffset + " rispetto a questa" : "questa settimana"} ${RUN_INFO.label ? " · " + esc(RUN_INFO.label) : ""}</div></div>
         <button class="btn ghost small" id="wkNext" aria-label="Settimana successiva">▶</button>
       </div>
-      <div class="sub">Segni la corsa sul giorno scelto in alto (${fmtDate(dateEl.value)}). Blocco di 8 settimane per tecnica, fiato e resistenza. Da gennaio arriva il lavoro specifico Hyrox.</div>
+      <div class="sub">Segni la corsa sul giorno scelto in alto (${fmtDate(dateEl.value)}). ${esc(RUN_INFO.note || "")}</div>
     </section>`;
-  list.appendChild(runCard("A", wk));
-  list.appendChild(runCard("B", wk));
+  for (const sess of Object.keys(RUN)) list.appendChild(runCard(sess, wk));
   list.insertAdjacentHTML("beforeend", `<section class="panel"><div class="sub">Il blocco è iniziato la settimana del ${fmtDate(runStart)}. <button class="linkbtn" id="wkReset">Fai ripartire da questa settimana</button></div></section>`);
   $("wkPrev").onclick = () => { runWeekOffset--; renderRun(); };
   $("wkNext").onclick = () => { runWeekOffset++; renderRun(); };
@@ -782,13 +658,13 @@ function makeDemo(weeks) {
       let reps;
       if (m) { const arr = Array.from({ length: +m[1] }, (_, i) => Math.max(1, +m[2] + (prog > 1 ? 1 : 0) - (i === +m[1] - 1 && rnd() < .6 ? 1 + Math.floor(rnd() * 2) : 0))); reps = arr.some((x) => x >= 10) ? arr.join(" ") : arr.join(""); }
       else reps = /max/.test(ex.s) ? String(8 + prog + Math.floor(rnd() * 3)) : String(parseInt(ex.s) || 10);
-      const base = DEMO_KG[id];
+      const base = DEMO_KG[id] ?? (m ? 20 + (id.length % 5) * 5 : null);
       (g[id] = g[id] || {})[addDays(ws, offs[dayKey])] = { r: reps, kg: base ? String(Math.round(base * (1 + 0.04 * prog) * 2) / 2).replace(".", ",") : "", t: 0 };
     }
-    const n = prog % 8, splitSec = 300 - prog * 3 + Math.round(rnd() * 6);
+    const n = prog % 8, rk = RUN ? Object.keys(RUN) : [], splitSec = 300 - prog * 3 + Math.round(rnd() * 6);
     const kmA = [5, 5, 4, 5, 6, 4, 6, 7][n], kmB = [5, 6, 5, 5, 7, 6, 8, 6][n];
-    r[addDays(ws, 1)] = { s: "A", km: String(kmA), time: fmtPace(kmA * (splitSec + 50)), split: fmtPace(splitSec), rpe: "8", t: 0 };
-    r[addDays(ws, rnd() < .5 ? 3 : 6)] = { s: "B", km: String(kmB), time: fmtPace(kmB * (360 - prog * 2)), rpe: "5", t: 0 };
+    if (rk[0]) r[addDays(ws, (RUN[rk[0]].wd || [2])[0] === 0 ? 6 : ((RUN[rk[0]].wd || [2])[0] + 6) % 7)] = { s: rk[0], km: String(kmA), time: fmtPace(kmA * (splitSec + 50)), split: fmtPace(splitSec), rpe: "8", t: 0 };
+    if (rk[1]) r[addDays(ws, rnd() < .5 ? 3 : 6)] = { s: rk[1], km: String(kmB), time: fmtPace(kmB * (360 - prog * 2)), rpe: "5", t: 0 };
     for (let i = 0; i < 7; i++) {
       const k = addDays(ws, i), meals = {};
       const type = autoType(k, g, r)[0];
@@ -819,7 +695,7 @@ function renderStats() {
   const w7 = last7.filter((k) => DD[k] && DD[k].water);
   const water7 = w7.length ? w7.reduce((a, k) => a + DD[k].water, 0) / w7.length * 0.25 : null;
   // hyrox split trend
-  const splits = runKeys.filter((k) => RR[k].s === "A" && parseTime(RR[k].split)).map((k) => ({ label: fmtDate(k), value: parseTime(RR[k].split) }));
+  const splits = runKeys.filter((k) => RUN && RUN[RR[k].s] && RUN[RR[k].s].split && parseTime(RR[k].split)).map((k) => ({ label: fmtDate(k), value: parseTime(RR[k].split) }));
   const paces = runKeys.filter((k) => paceOf(RR[k])).map((k) => ({ label: fmtDate(k), value: paceOf(RR[k]) }));
   // gym volume per week
   const volBy = {};
@@ -857,39 +733,41 @@ function renderStats() {
       <div class="sub">Dati inventati per vedere come diventano le statistiche. Non vengono salvati.</div>${demoBtns}</section>` : "") + `
     <h3 class="sect">Questa settimana</h3>
     <div class="tiles">
-      <div class="tile t-gym"><div class="k">Palestra</div><div class="v">${wkGym[7]}/4</div></div>
-      <div class="tile t-run"><div class="k">Corsa</div><div class="v">${wkRun[7]}/2</div></div>
-      <div class="tile t-run"><div class="k">Km corsi</div><div class="v">${fmtNum(wkKm[7])}</div></div>
-      <div class="tile t-food"><div class="k">Peso</div><div class="v">${lastW ? fmt1(lastW.v) : "–"}</div></div>
-      <div class="tile t-food"><div class="k">Pasti (7 gg)</div><div class="v">${meal7 != null ? meal7 + "%" : "–"}</div></div>
-      <div class="tile t-water"><div class="k">Acqua media</div><div class="v">${water7 ? fmt1(water7) + " L" : "–"}</div></div>
+      <div class="tile t-gym s-gym"><div class="k">Palestra</div><div class="v">${wkGym[7]}/${Object.keys(GYM).length}</div></div>
+      <div class="tile t-run s-run"><div class="k">Corsa</div><div class="v">${wkRun[7]}/${RUN ? Object.keys(RUN).length : 0}</div></div>
+      <div class="tile t-run s-run"><div class="k">Km corsi</div><div class="v">${fmtNum(wkKm[7])}</div></div>
+      <div class="tile t-food s-food"><div class="k">Peso</div><div class="v">${lastW ? fmt1(lastW.v) : "–"}</div></div>
+      <div class="tile t-food s-food"><div class="k">Pasti (7 gg)</div><div class="v">${meal7 != null ? meal7 + "%" : "–"}</div></div>
+      <div class="tile t-water s-food"><div class="k">Acqua media</div><div class="v">${water7 ? fmt1(water7) + " L" : "–"}</div></div>
     </div>
     ${hasAny ? "" : '<p class="empty">Ancora nessun dato. Le statistiche si riempiono quando segni allenamenti, pasti e peso. Intanto puoi provare la simulazione in fondo.</p>'}
-    <h3 class="sect">Allenamento</h3>
-    <section class="panel"><h2>Allenamenti a settimana</h2><div class="sub">Obiettivo: 4 palestra + 2 corsa</div>
+    <h3 class="sect s-train">Allenamento</h3>
+    <section class="panel s-train"><h2>Allenamenti a settimana</h2><div class="sub">Obiettivo: ${[HAS.gym && Object.keys(GYM).length + " palestra", HAS.run && Object.keys(RUN).length + " corsa"].filter(Boolean).join(" + ")}</div>
       ${barChart(weeks.map((w, i) => ({ label: fmtDate(w), values: [wkGym[i], wkRun[i]] })), [{ cls: "c-gym", label: "Palestra" }, { cls: "c-run", label: "Corsa" }], { max: 6, step: 2, fmt: (v) => String(v) })}</section>
-    <section class="panel"><h2>Km corsi a settimana</h2>
+    <section class="panel s-run"><h2>Km corsi a settimana</h2>
       ${runKeys.length ? barChart(weeks.map((w, i) => ({ label: fmtDate(w), values: [wkKm[i]] })), [{ cls: "c-run", label: "Km" }]) : '<p class="empty">Segna le corse nella scheda Corsa.</p>'}</section>
-    <section class="panel"><h2>Ritmo della parte veloce</h2><div class="sub">Seduta Tecnica e ritmo del martedì · più in basso = più veloce</div>
+    <section class="panel s-run"><h2>Ritmo della parte veloce</h2><div class="sub">Seduta Tecnica e ritmo del martedì · più in basso = più veloce</div>
       ${splits.length ? lineChart(splits, "/km", "c-run", fmtPace) : '<p class="empty">Segna il ritmo della parte veloce il martedì per vedere quanto migliori.</p>'}</section>
-    ${paces.length > 1 ? `<section class="panel"><h2>Ritmo medio delle corse</h2><div class="sub">Se scende sugli stessi km, la resistenza sta migliorando</div>${lineChart(paces, "/km", "c-run", fmtPace)}</section>` : ""}
-    <section class="panel"><h2>Volume palestra</h2><div class="sub">Ripetizioni × kg di tutti gli esercizi, per settimana</div>
+    ${paces.length > 1 ? `<section class="panel s-run"><h2>Ritmo medio delle corse</h2><div class="sub">Se scende sugli stessi km, la resistenza sta migliorando</div>${lineChart(paces, "/km", "c-run", fmtPace)}</section>` : ""}
+    <section class="panel s-gym"><h2>Volume palestra</h2><div class="sub">Ripetizioni × kg di tutti gli esercizi, per settimana</div>
       ${Object.keys(volBy).length ? barChart(weeks.map((w) => ({ label: fmtDate(w), values: [Math.round(volBy[w] || 0)] })), [{ cls: "c-gym", label: "Volume" }]) : '<p class="empty">Segna reps e kg nella scheda Palestra.</p>'}</section>
-    <section class="panel"><div class="panel-head"><h2>Andamento esercizio</h2>
+    <section class="panel s-gym"><div class="panel-head"><h2>Andamento esercizio</h2>
       ${rows.length ? `<select id="exsel" aria-label="Esercizio">${rows.map((r) => `<option value="${r.id}"${r.id === chartEx ? " selected" : ""}>${esc(GYM[GYM_EX[r.id].dayKey].name + " · " + GYM_EX[r.id].ex.n)}</option>`).join("")}</select>` : ""}</div>${exChart}</section>
-    ${rows.length ? `<section class="panel"><h2>Record palestra</h2><div class="tbl"><table>
+    ${rows.length ? `<section class="panel s-gym"><h2>Record palestra</h2><div class="tbl"><table>
       <thead><tr><th>Esercizio</th><th class="num">Ultima</th><th class="num">Max kg</th><th class="num">Dall'inizio</th></tr></thead>
       <tbody>${rows.map((r) => `<tr><td>${esc(GYM_EX[r.id].ex.n)} <span class="sub">${GYM[GYM_EX[r.id].dayKey].name}</span></td><td class="num">${esc(r.lastE.r || "–")}${r.lastE.kg ? " · " + esc(r.lastE.kg) : ""}</td><td class="num">${r.best != null ? fmtNum(r.best) : "–"}</td><td class="num ${r.diff > 0 ? "up" : ""}">${r.diff > 0 ? "+" + fmtNum(r.diff) + " kg" : "–"}</td></tr>`).join("")}</tbody></table></div></section>` : ""}
-    <h3 class="sect">Corpo e alimentazione</h3>
-    <section class="panel"><h2>Peso</h2>
+    <h3 class="sect s-food">Corpo e alimentazione</h3>
+    <section class="panel s-food"><h2>Peso</h2>
       ${ws.length ? `<div class="sub">kg · ${ws.length > 1 ? "dall'inizio " + diffKg(lastW.v, ws[0].v) + " kg" : "prima pesata"}</div>${lineChart(ws.slice(-60).map((w) => ({ label: fmtDate(w.k), value: w.v })), "kg", "c-food")}` : '<p class="empty">Segna il peso in Cibo › Peso.</p>'}</section>
-    <section class="panel"><h2>Pasti rispettati</h2><div class="sub">Ultimi 14 giorni</div>
+    <section class="panel s-food"><h2>Pasti rispettati</h2><div class="sub">Ultimi 14 giorni</div>
       ${Object.keys(DD).length ? barChart(Array.from({ length: 14 }, (_, i) => addDays(today, i - 13)).map((k) => ({ label: fmtDate(k), values: [pct(k) || 0] })), [{ cls: "c-food", label: "%" }], { max: 100, step: 50, fmt: (v) => Math.round(v) + "%" }) : '<p class="empty">Segna i pasti come fatti in Cibo › Pasti.</p>'}</section>
-    <section class="panel"><h2>Acqua</h2><div class="sub">Litri al giorno, ultimi 14 giorni · obiettivo 2–2,5 L</div>
+    <section class="panel s-food"><h2>Acqua</h2><div class="sub">Litri al giorno, ultimi 14 giorni · obiettivo 2–2,5 L</div>
       ${Object.values(DD).some((d) => d.water) ? barChart(Array.from({ length: 14 }, (_, i) => addDays(today, i - 13)).map((k) => ({ label: fmtDate(k), values: [DD[k] ? (DD[k].water || 0) * 0.25 : 0] })), [{ cls: "c-water", label: "L" }], { max: 3, step: 1, fmt: (v) => v + " L" }) : '<p class="empty">Tocca i bicchieri in Cibo › Pasti.</p>'}</section>
-    <section class="panel"><h2>Rotazione cibi</h2><div class="sub">Proteine e primi mangiati negli ultimi 14 giorni. Il piano chiede di variare.</div>
+    <section class="panel s-food"><h2>Rotazione cibi</h2><div class="sub">Proteine e primi mangiati negli ultimi 14 giorni. Il piano chiede di variare.</div>
       ${top.length ? `<div class="hbars">${top.map(([n, c]) => `<div class="hbar"><span class="name">${esc(n)}</span><span class="track"><span class="fill" style="width:${Math.round(100 * c / topMax)}%"></span></span><span>${c}×</span></div>`).join("")}</div>` : '<p class="empty">Scegli le alternative nei pasti e segnali come fatti.</p>'}</section>
     ${demo ? "" : `<section class="panel"><h2>Simulazione</h2><div class="sub">Guarda come saranno le statistiche con dati di esempio. Niente viene salvato.</div>${demoBtns}</section>`}`;
+  const hide = [!HAS.gym && ".s-gym", !HAS.run && ".s-run", !HAS.food && ".s-food", !HAS.gym && !HAS.run && ".s-train"].filter(Boolean);
+  if (hide.length) $("list").querySelectorAll(hide.join(",")).forEach((el) => el.remove());
   $("list").querySelectorAll("[data-demo]").forEach((b) => b.onclick = () => startDemo(+b.dataset.demo));
   if (demo) $("demoStop").onclick = () => { demo = null; chartEx = null; renderStats(); };
   const sel = $("exsel");
@@ -898,7 +776,7 @@ function renderStats() {
 
 // ---------- Sincronizzazione con il file sul NAS ----------
 // Un solo file con tutto. Ogni voce ha t (ora della modifica): quando si unisce vince la più recente.
-const FILE = "allenamento-dati.json";
+const FILE = (CONFIG.id || "allenamento") + "-dati.json";
 function mergeGym(inc) {
   let n = 0;
   for (const [id, h] of Object.entries(inc || {})) {
@@ -914,7 +792,7 @@ function mergeGym(inc) {
 function mergeRun(inc) {
   let n = 0;
   for (const [k, e] of Object.entries(inc || {})) {
-    if (!e || !/^\d{4}-\d{2}-\d{2}$/.test(k) || !RUN[e.s] && e.s !== "X") continue;
+    if (!e || !/^\d{4}-\d{2}-\d{2}$/.test(k) || !(RUN && RUN[e.s])) continue;
     if (!R[k] || (e.t || 0) > (R[k].t || 0)) { R[k] = { s: e.s, km: String(e.km || ""), time: String(e.time || ""), split: String(e.split || ""), rpe: String(e.rpe || ""), t: Number(e.t) || 0 }; n++; }
   }
   return n;
@@ -935,12 +813,12 @@ function mergeDiet(inc) {
 // accepts the new file and the two old ones (palestra-dati.json, dieta-dati.json)
 function mergeFile(text) {
   const f = JSON.parse(text);
-  if (f && f.app === "allenamento") return mergeGym(f.gym) + mergeRun(f.run) + mergeDiet(f.diet);
-  if (f && f.app === "scheda-palestra") return mergeGym(f.logs);
-  if (f && f.app === "piano-alimentare") return mergeDiet(f.days);
+  if (f && f.app === "allenamento" && (f.client || "") === (CONFIG.id || "")) return mergeGym(f.gym) + mergeRun(f.run) + mergeDiet(f.diet);
+  if (f && f.app === "scheda-palestra" && !CONFIG.id) return mergeGym(f.logs);
+  if (f && f.app === "piano-alimentare" && !CONFIG.id) return mergeDiet(f.days);
   throw new Error("bad_file");
 }
-function fileJson() { return JSON.stringify({ app: "allenamento", v: 1, savedAt: new Date().toISOString(), gym: G, run: R, diet: D }); }
+function fileJson() { return JSON.stringify({ app: "allenamento", client: CONFIG.id || "", v: 1, savedAt: new Date().toISOString(), gym: G, run: R, diet: D }); }
 
 function syncMeta() { try { return JSON.parse(localStorage.getItem(K.meta) || "{}"); } catch (e) { return {}; } }
 function markSynced() { try { localStorage.setItem(K.meta, JSON.stringify({ last: Date.now() })); } catch (e) {} refreshSyncInfo(); }
@@ -982,7 +860,7 @@ function renderSync() {
   $("syncBody").innerHTML = `
     ${canPickFile ? `<p class="sub">Legge il file dei dati, unisce con quelli di questo dispositivo e lo aggiorna. Un solo file per palestra, corsa e alimentazione.</p>
     <div class="btns"><button class="btn" id="syncGo">Sincronizza ora</button><button class="btn ghost" id="syncPick">Scegli un altro file</button></div>
-    <p class="sub">La prima volta scegli dove tenere <b>${FILE}</b>: sul PC la cartella <b>DRIVE › App palestra</b> del NAS, sul telefono <b>Download</b> (poi lo copi sul NAS con CX File Explorer). Se il file esiste già conferma "Sostituisci": prima viene letto e unito.</p>` : `<p class="sub">Questo browser non può aprire file direttamente: usa Chrome.</p>`}
+    <p class="sub">La prima volta scegli dove tenere <b>${FILE}</b>: ${esc(APP.syncHint || "una cartella sul PC (o su un disco di rete); sul telefono la cartella Download.")} Se il file esiste già conferma "Sostituisci": prima viene letto e unito.</p>` : `<p class="sub">Questo browser non può aprire file direttamente: usa Chrome.</p>`}
     <div class="btns"><button class="btn ghost small" id="importOld">Importa un file vecchio</button><input type="file" id="importFile" accept=".json,application/json" hidden></div>
     <p class="sub">Per unire i dati dei file delle app precedenti (palestra-dati.json o dieta-dati.json), per esempio quelli del PC.</p>`;
   if (canPickFile) {

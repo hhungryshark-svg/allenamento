@@ -1,6 +1,6 @@
 // Keeps the app usable offline. Bump VERSION when the app files change.
-const VERSION = "allenamento-v2";
-const CORE = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
+const VERSION = "allenamento-20261104180918";
+const CORE = ["./", "index.html", "config.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
