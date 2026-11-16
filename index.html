@@ -170,6 +170,73 @@ td.muted { color: var(--muted); font-size: .85rem; }
 .btn.dirty::after { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--err); margin-left: 6px; vertical-align: middle; }
 .panel.demo { border-color: var(--accent); background: var(--accent-soft); }
 #syncPanel { margin-top: 8px; }
+
+/* Day button in the header (opens the calendar) */
+.datebtn { display: inline-flex; align-items: center; gap: 6px; font: 600 .95rem var(--body); color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.datebtn svg { width: 16px; height: 16px; fill: var(--accent); }
+
+/* Stats tiles open a detail sheet */
+button.tile { font: inherit; color: inherit; text-align: left; cursor: pointer; position: relative; width: 100%; }
+button.tile::after { content: "›"; position: absolute; right: 8px; top: 4px; color: var(--muted); font-size: 1.2rem; line-height: 1; }
+.tile .k, .tile .v { display: block; }
+button.tile:active { transform: scale(.98); }
+
+/* Bottom sheet */
+body.noscroll { overflow: hidden; }
+.sheet { position: fixed; inset: 0; z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
+.sheet-bg { position: absolute; inset: 0; background: rgb(0 0 0 / .45); }
+.sheet[data-kind="gym"] { --k: var(--gym); } .sheet[data-kind="run"] { --k: var(--run); }
+.sheet[data-kind="weight"], .sheet[data-kind="meals"] { --k: var(--food); } .sheet[data-kind="water"] { --k: var(--water); }
+.sheet[data-kind="cal"] { --k: var(--accent); }
+.sheet-card { --accent: var(--k); --accent-soft: color-mix(in srgb, var(--k) 16%, transparent); --accent-ink: var(--card);
+  position: relative; width: 100%; max-width: 640px; box-sizing: border-box; max-height: 90vh; max-height: 90dvh; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--bg); border-radius: 18px 18px 0 0; padding: 8px max(16px, env(safe-area-inset-left, 0px)) calc(20px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -8px 30px rgb(0 0 0 / .25); animation: sheetUp .22s ease-out; }
+@keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } }
+.sheet-grab { width: 40px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 2px; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; position: sticky; top: -8px; z-index: 2; background: var(--bg); padding-block: 8px; }
+.sheet-head h2 { font-size: 1.7rem; color: var(--k); }
+.sheet-body { display: flex; flex-direction: column; gap: 10px; }
+.pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pills button { flex: 1; font: 600 .9rem var(--body); padding: 7px 10px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; white-space: nowrap; }
+.pills button[aria-pressed="true"] { border-color: var(--k); background: color-mix(in srgb, var(--k) 16%, transparent); }
+.daychart { touch-action: manipulation; cursor: pointer; }
+.daychart.c-water { --c: var(--water); }
+.daychart rect.bar { fill: var(--c); opacity: .45; }
+.daychart rect.bar.on { opacity: 1; }
+.daychart rect.selcol { fill: var(--c); opacity: .1; }
+.daychart rect.hit { fill: transparent; }
+.daychart .dot.on { stroke: var(--card); stroke-width: 3; }
+.daychart text.selv { fill: var(--fg); font-weight: 700; }
+.dayhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.dayhead h3 { font: 700 1.25rem var(--display); text-transform: uppercase; letter-spacing: .03em; margin: 0; text-align: center; flex: 1; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px; }
+.sheet-body > .facts .fact { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--k); }
+.fact { background: var(--bg); border-radius: 10px; padding: 8px 10px; }
+.fact .k { display: block; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.fact .v { display: block; font: 700 1.35rem/1.15 var(--display); font-variant-numeric: tabular-nums; }
+.mealrow { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); }
+.mealrow:first-child { border-top: 0; }
+.mealrow .ok { color: var(--ok); font-weight: 600; } .mealrow .no { color: var(--muted); }
+
+/* Calendar */
+.cal-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cal-nav h3 { font: 700 1.3rem var(--display); text-transform: uppercase; letter-spacing: .03em; margin: 0; flex: 1; text-align: center; }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-w { text-align: center; font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding-block: 4px; }
+.cal-d { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 7px 0 6px; min-height: 50px; border: 0; border-radius: 10px; background: transparent; color: var(--fg); font: 600 1.05rem var(--body); font-variant-numeric: tabular-nums; cursor: pointer; }
+.cal-d.out { opacity: .4; }
+.cal-d.today .n { color: var(--accent); text-decoration: underline 2px; text-underline-offset: 3px; }
+.cal-d.sel { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
+.dots { display: flex; gap: 3px; height: 8px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; display: block; }
+i.d-gym { background: var(--gym); } i.d-run { background: var(--run); }
+.cal-legend { display: flex; gap: 14px; justify-content: center; font-size: .8rem; color: var(--muted); }
+.cal-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.daysum { display: flex; flex-direction: column; gap: 6px; }
+.daysum .row { display: flex; gap: 8px; align-items: baseline; }
+.daysum .row i { flex: none; width: 9px; height: 9px; border-radius: 50%; transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) { .sheet-card { animation: none; } button.tile:active { transform: none; } }
 @media (max-width: 380px) { nav button { font-size: 1rem; } .tile .v { font-size: 1.4rem; } .log.log3 { grid-template-columns: 1fr 1fr; } .types button { font-size: .85rem; } }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
@@ -179,7 +246,8 @@ td.muted { color: var(--muted); font-size: .85rem; }
   <header>
     <h1>Allenamento</h1>
     <div class="head-actions">
-      <label class="date">Giorno <input type="date" id="date"></label>
+      <input type="hidden" id="date">
+      <button class="datebtn" id="dateBtn" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm-2 7h14v11H5V9z"/></svg><span id="dateLabel"></span></button>
       <button class="btn ghost small" id="installBtn" hidden>Installa app</button>
       <button class="btn small" id="syncBtn">Sincronizza</button>
     </div>
@@ -193,6 +261,14 @@ td.muted { color: var(--muted); font-size: .85rem; }
   </section>
   <nav role="tablist" id="tabs"></nav>
   <main class="list" id="list"></main>
+</div>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-bg" id="sheetBg"></div>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-grab"></div>
+    <div class="sheet-head"><h2 id="sheetTitle"></h2><button class="btn ghost small" id="sheetClose">Chiudi</button></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
 </div>
 <script src="config.js"></script>
 <script>
@@ -299,6 +375,11 @@ function dietDay(key, DD = D, GG = G, RR = R) {
   const [auto, why] = autoType(key, GG, RR);
   return { ...d, type: foodType(d.type || auto), auto: !d.type, why };
 }
+function mealPct(k, DD = D, GG = G, RR = R) {
+  const d = DD[k]; if (!d) return null;
+  const ms = FOOD[dietDay(k, DD, GG, RR).type].meals;
+  return ms.length ? Math.round(100 * ms.filter((m) => (d.meals || {})[m.id]?.done).length / ms.length) : null;
+}
 function touchDiet(key, patch) {
   const cur = D[key] || { meals: {}, water: 0, t: 0 };
   D[key] = { ...cur, ...patch, t: Date.now() };
@@ -354,8 +435,15 @@ function subnav(items, cur, onPick) {
   return el;
 }
 const SEC_COLOR = { palestra: "#0E7C66", corsa: "#5B3FD6", cibo: "#B9561F", stats: "#1F6FB2" };
+const DOW = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
+const DOW_FULL = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+const MONTHS = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+function longDate(k) { const [y, m, d] = k.split("-").map(Number); return DOW_FULL[weekday(k)] + " " + d + " " + MONTHS[m - 1] + (y !== new Date().getFullYear() ? " " + y : ""); }
 function render() {
   document.body.dataset.sec = tab;
+  const dk = dateEl.value;
+  $("dateLabel").textContent = (dk === todayKey() ? "Oggi" : DOW[weekday(dk)]) + " " + fmtDate(dk);
+  $("dateBtn").setAttribute("aria-label", "Giorno: " + longDate(dk) + ". Apri il calendario");
   const tc = $("themeColor"); if (tc) tc.content = SEC_COLOR[tab];
   ({ palestra: renderGym, corsa: renderRun, cibo: renderFood, stats: renderStats })[tab]();
 }
@@ -689,7 +777,7 @@ function renderStats() {
   const ws = weights(DD), lastW = ws[ws.length - 1];
   // diet last 7 days
   const last7 = Array.from({ length: 7 }, (_, i) => addDays(today, i - 6));
-  const pct = (k) => { const d = DD[k]; if (!d) return null; const t = dietDay(k, DD, GG, RR).type, ms = FOOD[t].meals; return Math.round(100 * ms.filter((m) => (d.meals || {})[m.id]?.done).length / ms.length); };
+  const pct = (k) => mealPct(k, DD, GG, RR);
   const p7 = last7.map(pct).filter((v) => v != null);
   const meal7 = p7.length ? Math.round(p7.reduce((a, b) => a + b, 0) / p7.length) : null;
   const w7 = last7.filter((k) => DD[k] && DD[k].water);
@@ -732,13 +820,14 @@ function renderStats() {
     <section class="panel demo"><div class="panel-head"><h2>Simulazione · ${demo.weeks === 1 ? "1 settimana" : demo.weeks === 4 ? "1 mese" : "3 mesi"}</h2><button class="btn small" id="demoStop">Esci</button></div>
       <div class="sub">Dati inventati per vedere come diventano le statistiche. Non vengono salvati.</div>${demoBtns}</section>` : "") + `
     <h3 class="sect">Questa settimana</h3>
+    <div class="sub">Tocca un riquadro per grafici e dettagli giorno per giorno.</div>
     <div class="tiles">
-      <div class="tile t-gym s-gym"><div class="k">Palestra</div><div class="v">${wkGym[7]}/${Object.keys(GYM).length}</div></div>
-      <div class="tile t-run s-run"><div class="k">Corsa</div><div class="v">${wkRun[7]}/${RUN ? Object.keys(RUN).length : 0}</div></div>
-      <div class="tile t-run s-run"><div class="k">Km corsi</div><div class="v">${fmtNum(wkKm[7])}</div></div>
-      <div class="tile t-food s-food"><div class="k">Peso</div><div class="v">${lastW ? fmt1(lastW.v) : "–"}</div></div>
-      <div class="tile t-food s-food"><div class="k">Pasti (7 gg)</div><div class="v">${meal7 != null ? meal7 + "%" : "–"}</div></div>
-      <div class="tile t-water s-food"><div class="k">Acqua media</div><div class="v">${water7 ? fmt1(water7) + " L" : "–"}</div></div>
+      <button class="tile t-gym s-gym" data-open="gym"><span class="k">Palestra</span><span class="v">${wkGym[7]}/${Object.keys(GYM).length}</span></button>
+      <button class="tile t-run s-run" data-open="run"><span class="k">Corsa</span><span class="v">${wkRun[7]}/${RUN ? Object.keys(RUN).length : 0}</span></button>
+      <button class="tile t-run s-run" data-open="run"><span class="k">Km corsi</span><span class="v">${fmtNum(wkKm[7])}</span></button>
+      <button class="tile t-food s-food" data-open="weight"><span class="k">Peso</span><span class="v">${lastW ? fmt1(lastW.v) : "–"}</span></button>
+      <button class="tile t-food s-food" data-open="meals"><span class="k">Pasti (7 gg)</span><span class="v">${meal7 != null ? meal7 + "%" : "–"}</span></button>
+      <button class="tile t-water s-food" data-open="water"><span class="k">Acqua media</span><span class="v">${water7 ? fmt1(water7) + " L" : "–"}</span></button>
     </div>
     ${hasAny ? "" : '<p class="empty">Ancora nessun dato. Le statistiche si riempiono quando segni allenamenti, pasti e peso. Intanto puoi provare la simulazione in fondo.</p>'}
     <h3 class="sect s-train">Allenamento</h3>
@@ -769,9 +858,312 @@ function renderStats() {
   const hide = [!HAS.gym && ".s-gym", !HAS.run && ".s-run", !HAS.food && ".s-food", !HAS.gym && !HAS.run && ".s-train"].filter(Boolean);
   if (hide.length) $("list").querySelectorAll(hide.join(",")).forEach((el) => el.remove());
   $("list").querySelectorAll("[data-demo]").forEach((b) => b.onclick = () => startDemo(+b.dataset.demo));
+  $("list").querySelectorAll("[data-open]").forEach((b) => b.onclick = () => openDetail(b.dataset.open));
   if (demo) $("demoStop").onclick = () => { demo = null; chartEx = null; renderStats(); };
   const sel = $("exsel");
   if (sel) sel.onchange = () => { chartEx = sel.value; renderStats(); };
+}
+
+// ---------- Scheda a comparsa (dettagli e calendario) ----------
+const sheetEl = $("sheet");
+let sheetHist = false, afterClose = null;
+function openSheet(kind, title, draw) {
+  sheetEl.dataset.kind = kind;
+  $("sheetTitle").textContent = title;
+
+  draw();
+  const wasHidden = sheetEl.hidden;
+  sheetEl.hidden = false;
+  document.body.classList.add("noscroll");
+  if (wasHidden) {
+    sheetEl.querySelector(".sheet-card").scrollTop = 0;
+    // so the phone's back gesture closes the sheet instead of the app
+    if (!sheetHist) { try { history.pushState({ sheet: 1 }, ""); sheetHist = true; } catch (e) {} }
+    $("sheetClose").focus({ preventScroll: true });
+  }
+}
+function hideSheet() { sheetEl.hidden = true; document.body.classList.remove("noscroll"); }
+function closeSheet(then) {
+  if (sheetEl.hidden) { if (then) then(); return; }
+  hideSheet();
+  if (sheetHist) { sheetHist = false; afterClose = then || null; history.back(); }
+  else if (then) then();
+}
+window.addEventListener("popstate", () => {
+  if (!sheetEl.hidden) { sheetHist = false; hideSheet(); }
+  const f = afterClose; afterClose = null;
+  if (f) f();
+});
+$("sheetClose").onclick = () => closeSheet();
+$("sheetBg").onclick = () => closeSheet();
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !sheetEl.hidden) closeSheet(); });
+
+// Apre un giorno nella sezione giusta (dalla scheda dettagli o dal calendario)
+function gotoDay(k, t, sub) {
+  dateEl.value = k;
+  runWeekOffset = 0;
+  const logged = Object.entries(G).filter(([id, h]) => GYM_EX[id] && hasG(h[k])).map(([id]) => GYM_EX[id].dayKey);
+  gymDay = logged[0] || GYM_WD[weekday(k)] || gymDay;
+  if (sub) foodSub = sub;
+  selectTab(TABS[t] ? t : tab);
+}
+
+// Cosa è stato fatto in un giorno
+function gymOn(k, GG) {
+  const out = [];
+  for (const id of Object.keys(GYM_EX)) {
+    const e = (GG[id] || {})[k];
+    if (!hasG(e)) continue;
+    const reps = parseReps(e.r).reduce((a, b) => a + b, 0), kg = kgNum(e.kg);
+    out.push({ id, ex: GYM_EX[id].ex, dayKey: GYM_EX[id].dayKey, e, vol: kg ? reps * kg : 0 });
+  }
+  return out;
+}
+const sumVol = (list) => list.reduce((a, x) => a + x.vol, 0);
+const fmtKg = (v) => Math.round(v).toLocaleString("it-IT");
+
+// ---------- Dettagli dal resoconto ----------
+const KINDS = {
+  gym: { title: "Palestra", cls: "c-gym", tab: "palestra", metrics: [["vol", "Volume (kg)"], ["ex", "Esercizi"]] },
+  run: { title: "Corsa", cls: "c-run", tab: "corsa", metrics: [["km", "Km"], ["pace", "Ritmo"]] },
+  weight: { title: "Peso", cls: "c-food", tab: "cibo", sub: "peso", metrics: [["kg", "Peso"]] },
+  meals: { title: "Pasti", cls: "c-food", tab: "cibo", sub: "pasti", metrics: [["pct", "Pasti"]] },
+  water: { title: "Acqua", cls: "c-water", tab: "cibo", sub: "pasti", metrics: [["l", "Acqua"]] },
+};
+const RANGES = [[14, "2 settimane"], [30, "1 mese"], [90, "3 mesi"]];
+let det = { kind: "gym", metric: "vol", range: 30, sel: null };
+
+function openDetail(kind) {
+  det = { kind, metric: KINDS[kind].metrics[0][0], range: 30, sel: null };
+  openSheet(kind, KINDS[kind].title, drawDetail);
+}
+function metricInfo(kind, metric, GG, RR, DD) {
+  // returns { type: bar|line, val(k), fmt, unit, max?, step? }
+  const gm = {};
+  if (kind === "gym") for (const [id, h] of Object.entries(GG)) if (GYM_EX[id]) for (const k of Object.keys(h)) if (hasG(h[k])) gm[k] = true;
+  const cache = {};
+  const gl = (k) => cache[k] || (cache[k] = gm[k] ? gymOn(k, GG) : []);
+  return {
+    "gym:vol": { type: "bar", val: (k) => Math.round(sumVol(gl(k))), unit: "kg", sel: fmtKg },
+    "gym:ex": { type: "bar", val: (k) => gl(k).length, unit: "", fmt: (v) => String(Math.round(v)) },
+    "run:km": { type: "bar", val: (k) => hasR(RR[k]) ? kgNum(RR[k].km) || 0 : 0, unit: "km" },
+    "run:pace": { type: "line", val: (k) => hasR(RR[k]) ? paceOf(RR[k]) : null, unit: "/km", fmt: fmtPace },
+    "weight:kg": { type: "line", val: (k) => DD[k] && DD[k].kg ? DD[k].kg : null, unit: "kg", fmt: (v) => String(Math.round(v * 100) / 100).replace(".", ","), sel: fmt1 },
+    "meals:pct": { type: "bar", val: (k) => mealPct(k, DD, GG, RR) || 0, unit: "%", max: 100, step: 50, fmt: (v) => Math.round(v) + "%" },
+    "water:l": { type: "bar", val: (k) => DD[k] ? (DD[k].water || 0) * 0.25 : 0, unit: "L", max: 3, step: 1, fmt: (v) => fmt1(v).replace(",0", "") + " L" },
+  }[kind + ":" + metric];
+}
+
+// Istogramma (o linea) giorno per giorno; ogni giorno si può toccare
+function dayChart(days, vals, o) {
+  const W = 600, H = 230, L = 58, Rr = 10, T = 30, B = 28;
+  const n = days.length, bw = (W - L - Rr) / n;
+  const f = o.fmt || fmtNum;
+  const present = vals.filter((v) => v != null && (o.type === "line" || v > 0));
+  let lo = 0, hi;
+  if (o.type === "line") {
+    lo = present.length ? Math.min(...present) : 0; hi = present.length ? Math.max(...present) : 1;
+    if (lo === hi) { lo -= 1; hi += 1; }
+  } else hi = o.max || Math.max(1, ...present);
+  const step = o.step || niceStep((hi - lo) / 3);
+  if (o.type === "line") lo = Math.floor(lo / step) * step;
+  hi = o.max || Math.ceil(hi / step) * step;
+  const y = (v) => T + (H - T - B) * (1 - (Math.min(v, hi) - lo) / (hi - lo));
+  const cx = (i) => L + i * bw + bw / 2;
+  const si = days.indexOf(o.sel);
+  let s = `<svg class="chart daychart ${o.cls}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafico giorno per giorno">`;
+  for (let v = lo; v <= hi + 1e-9; v += step) s += `<line class="grid" x1="${L}" x2="${W - Rr}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 6}" y="${y(v) + 5}" text-anchor="end">${f(v)}</text>`;
+  if (si >= 0) s += `<rect class="selcol" x="${L + si * bw}" y="24" width="${bw}" height="${H - B - 24}" rx="3"/>`;
+  if (o.type === "bar") {
+    vals.forEach((v, i) => { if (v > 0) s += `<rect class="bar${i === si ? " on" : ""}" x="${L + i * bw + bw * 0.14}" y="${y(v)}" width="${bw * 0.72}" height="${Math.max(1, y(lo) - y(v))}" rx="${Math.min(3, bw * 0.2)}"/>`; });
+  } else {
+    const pts = vals.map((v, i) => v != null ? `${cx(i)},${y(v)}` : null).filter(Boolean);
+    if (pts.length > 1) s += `<polyline class="line" points="${pts.join(" ")}"/>`;
+    vals.forEach((v, i) => { if (v != null) s += `<circle class="dot${i === si ? " on" : ""}" cx="${cx(i)}" cy="${y(v)}" r="${i === si ? 7 : n > 40 ? 3 : 4}"/>`; });
+  }
+  const every = Math.ceil(n / 7);
+  days.forEach((k, i) => { if ((n - 1 - i) % every === 0) s += `<text x="${cx(i)}" y="${H - 8}" text-anchor="middle">${fmtDate(k)}</text>`; });
+  if (si >= 0 && vals[si] != null && (o.type === "line" || vals[si] > 0)) {
+    const tx = Math.max(L + 45, Math.min(W - Rr - 45, cx(si))), fs = o.selFmt || f;
+    s += `<text class="selv" x="${tx}" y="18" text-anchor="middle">${fs(vals[si])}${o.unit && !/%|L$/.test(fs(vals[si])) ? " " + o.unit : ""}</text>`;
+  }
+  days.forEach((k, i) => { s += `<rect class="hit" data-k="${k}" x="${L + i * bw}" y="0" width="${bw}" height="${H}"><title>${fmtDate(k)}</title></rect>`; });
+  return s + "</svg>";
+}
+
+function fact(k, v) { return `<div class="fact"><span class="k">${esc(k)}</span><span class="v">${v}</span></div>`; }
+function rangeFacts(kind, days, GG, RR, DD) {
+  if (kind === "gym") {
+    const per = days.map((k) => gymOn(k, GG)).filter((l) => l.length);
+    const vols = per.map(sumVol);
+    return fact("Allenamenti", per.length) + fact("Volume totale", fmtKg(vols.reduce((a, b) => a + b, 0)) + " kg") + fact("Seduta migliore", vols.length ? fmtKg(Math.max(...vols)) + " kg" : "–");
+  }
+  if (kind === "run") {
+    const rs = days.filter((k) => hasR(RR[k])).map((k) => RR[k]);
+    const km = rs.reduce((a, e) => a + (kgNum(e.km) || 0), 0);
+    const both = rs.filter((e) => paceOf(e));
+    const pace = both.length ? both.reduce((a, e) => a + parseTime(e.time), 0) / both.reduce((a, e) => a + kgNum(e.km), 0) : null;
+    return fact("Corse", rs.length) + fact("Km totali", fmtNum(km)) + fact("Ritmo medio", pace ? fmtPace(pace) + " /km" : "–");
+  }
+  if (kind === "weight") {
+    const ws = days.filter((k) => DD[k] && DD[k].kg).map((k) => DD[k].kg);
+    return fact("Ultimo", ws.length ? fmt1(ws[ws.length - 1]) + " kg" : "–") + fact("Nel periodo", ws.length > 1 ? diffKg(ws[ws.length - 1], ws[0]) + " kg" : "–") + fact("Minimo", ws.length ? fmt1(Math.min(...ws)) + " kg" : "–");
+  }
+  if (kind === "meals") {
+    const ps = days.map((k) => mealPct(k, DD, GG, RR)).filter((v) => v != null);
+    return fact("Media", ps.length ? Math.round(ps.reduce((a, b) => a + b, 0) / ps.length) + "%" : "–") + fact("Giorni al 100%", ps.filter((v) => v === 100).length) + fact("Giorni segnati", ps.length);
+  }
+  const ls = days.filter((k) => DD[k] && DD[k].water).map((k) => DD[k].water * 0.25);
+  return fact("Media", ls.length ? fmt1(ls.reduce((a, b) => a + b, 0) / ls.length) + " L" : "–") + fact("Giorni ≥ 2 L", ls.filter((v) => v >= 2).length) + fact("Massimo", ls.length ? fmt1(Math.max(...ls)) + " L" : "–");
+}
+
+function dayDetail(kind, k, GG, RR, DD) {
+  if (kind === "gym") {
+    const list = gymOn(k, GG);
+    if (!list.length) return `<p class="empty">Nessun esercizio segnato in questo giorno.${GYM_WD[weekday(k)] ? " Era in programma " + esc(GYM[GYM_WD[weekday(k)]].full || GYM[GYM_WD[weekday(k)]].name) + "." : ""}</p>`;
+    const plans = [...new Set(list.map((x) => x.dayKey))].map((d) => GYM[d].full || GYM[d].name).join(" + ");
+    return `<div class="facts">${fact("Scheda", esc(plans))}${fact("Esercizi", list.length)}${fact("Volume", fmtKg(sumVol(list)) + " kg")}</div>
+      <div class="tbl"><table><thead><tr><th>Esercizio</th><th class="num">Reps</th><th class="num">Kg</th><th class="num">Volume</th></tr></thead>
+      <tbody>${list.map((x) => `<tr><td>${esc(x.ex.n)}</td><td class="num">${esc(x.e.r || "–")}</td><td class="num">${esc(x.e.kg || "–")}</td><td class="num muted">${x.vol ? fmtKg(x.vol) : "–"}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+  if (kind === "run") {
+    const e = RR[k];
+    if (!hasR(e)) {
+      const planned = RUN && Object.values(RUN).find((x) => (x.wd || []).includes(weekday(k)));
+      return `<p class="empty">Nessuna corsa segnata in questo giorno.${planned ? " Era in programma " + esc(planned.name) + "." : ""}</p>`;
+    }
+    const P = RUN && RUN[e.s];
+    return `<div class="facts">${fact("Seduta", esc(P ? P.name : e.s))}${fact("Km", esc(e.km || "–"))}${fact("Tempo", esc(e.time || "–"))}${fact("Ritmo medio", paceOf(e) ? fmtPace(paceOf(e)) + " /km" : "–")}${e.split ? fact("Parte veloce", esc(e.split) + " /km") : ""}${e.rpe ? fact("Fatica", esc(e.rpe) + "/10") : ""}</div>`;
+  }
+  if (kind === "weight") {
+    const v = DD[k] && DD[k].kg;
+    if (!v) return '<p class="empty">Nessuna pesata in questo giorno.</p>';
+    const prev = weights(DD).filter((w) => w.k < k).pop();
+    return `<div class="facts">${fact("Peso", fmt1(v) + " kg")}${fact("Rispetto a prima", prev ? diffKg(v, prev.v) + " kg" : "–")}${prev ? fact("Pesata precedente", fmtDate(prev.k)) : ""}</div>`;
+  }
+  const d = DD[k];
+  if (!d) return '<p class="empty">Niente segnato in questo giorno.</p>';
+  const dd = dietDay(k, DD, GG, RR), plan = FOOD[dd.type];
+  if (kind === "water") return `<div class="facts">${fact("Acqua", fmt1((d.water || 0) * 0.25) + " L")}${fact("Bicchieri", d.water || 0)}${fact("Obiettivo", (d.water || 0) >= 8 ? "raggiunto ✓" : "2–2,5 L")}</div>`;
+  return `<div class="facts">${fact("Giornata", esc(plan.name))}${fact("Pasti fatti", (mealPct(k, DD, GG, RR) ?? 0) + "%")}</div>
+    <div>${plan.meals.map((m) => { const st = (d.meals || {})[m.id] || {}; return `<div class="mealrow"><span>${esc(m.n)} <span class="sub">${esc(m.h || "")}</span></span>${st.done ? '<span class="ok">✓ fatto</span>' : '<span class="no">non segnato</span>'}</div>`; }).join("")}</div>`;
+}
+
+function drawDetail() {
+  const GG = SG(), RR = SR(), DD = SD(), K0 = KINDS[det.kind], today = todayKey();
+  const days = Array.from({ length: det.range }, (_, i) => addDays(today, i - det.range + 1));
+  const mi = metricInfo(det.kind, det.metric, GG, RR, DD);
+  const vals = days.map(mi.val);
+  const has = (v) => v != null && (mi.type === "line" || v > 0);
+  if (!det.sel || !days.includes(det.sel)) { const li = vals.map(has).lastIndexOf(true); det.sel = li >= 0 ? days[li] : today; }
+  const si = days.indexOf(det.sel);
+  const anyData = vals.some(has);
+  $("sheetBody").innerHTML = `
+    ${demo ? '<div class="sub">Simulazione: dati inventati, non salvati.</div>' : ""}
+    <div class="pills" role="group" aria-label="Periodo">${RANGES.map(([r, l]) => `<button data-range="${r}" aria-pressed="${r === det.range}">${l}</button>`).join("")}</div>
+    <div class="facts">${rangeFacts(det.kind, days, GG, RR, DD)}</div>
+    <section class="panel">
+      <div class="panel-head"><h2>${esc(K0.metrics.find((m) => m[0] === det.metric)[1])}</h2>
+        ${K0.metrics.length > 1 ? `<div class="pills" role="group" aria-label="Cosa mostrare">${K0.metrics.map(([m, l]) => `<button data-metric="${m}" aria-pressed="${m === det.metric}">${esc(l.replace(/ \(.*\)/, ""))}</button>`).join("")}</div>` : ""}</div>
+      <div class="sub">${det.metric === "pace" ? "Più in basso = più veloce. " : ""}Tocca un giorno nel grafico per vedere cosa hai fatto.</div>
+      ${anyData ? dayChart(days, vals, { type: mi.type, cls: K0.cls, sel: det.sel, fmt: mi.fmt, selFmt: mi.sel, unit: mi.unit, max: mi.max, step: mi.step }) : `<p class="empty">Nessun dato in questo periodo.${det.range < 90 ? " Prova un periodo più lungo." : ""}</p>`}
+    </section>
+    <section class="panel" id="dayPanel">
+      <div class="dayhead">
+        <button class="btn ghost small" data-step="-1" aria-label="Giorno precedente"${si <= 0 ? " disabled" : ""}>◀</button>
+        <h3>${esc(longDate(det.sel))}</h3>
+        <button class="btn ghost small" data-step="1" aria-label="Giorno successivo"${si >= days.length - 1 ? " disabled" : ""}>▶</button>
+      </div>
+      ${dayDetail(det.kind, det.sel, GG, RR, DD)}
+      ${demo ? "" : `<div class="btns"><button class="btn" id="detGo">Apri questo giorno in ${esc(TABS[K0.tab] || "")}</button></div>`}
+    </section>`;
+  const body = $("sheetBody");
+  body.querySelectorAll("[data-range]").forEach((b) => b.onclick = () => { det.range = +b.dataset.range; drawDetail(); });
+  body.querySelectorAll("[data-metric]").forEach((b) => b.onclick = () => { det.metric = b.dataset.metric; drawDetail(); });
+  body.querySelectorAll("[data-step]").forEach((b) => b.onclick = () => { det.sel = days[Math.max(0, Math.min(days.length - 1, si + +b.dataset.step))]; drawDetail(); });
+  const svg = body.querySelector(".daychart");
+  if (svg) svg.onclick = (ev) => {
+    const r = ev.target.closest("[data-k]");
+    if (!r) return;
+    det.sel = r.dataset.k; drawDetail();
+    $("dayPanel").scrollIntoView({ block: "nearest", behavior: "smooth" });
+  };
+  if ($("detGo")) $("detGo").onclick = () => { const k = det.sel; closeSheet(() => gotoDay(k, K0.tab, K0.sub)); };
+}
+
+// ---------- Calendario per scegliere il giorno ----------
+let cal = { month: null, sel: null };
+function openCalendar() {
+  cal = { month: dateEl.value.slice(0, 7), sel: dateEl.value };
+  openSheet("cal", "Scegli il giorno", drawCalendar);
+}
+function plannedOn(k) {
+  const wd = weekday(k), out = [];
+  if (GYM_WD[wd]) out.push("palestra (" + (GYM[GYM_WD[wd]].full || GYM[GYM_WD[wd]].name) + ")");
+  const p = RUN && Object.values(RUN).find((x) => (x.wd || []).includes(wd));
+  if (p) out.push("corsa (" + p.name + ")");
+  return out;
+}
+function drawCalendar() {
+  const today = todayKey(), [y, m] = cal.month.split("-").map(Number);
+  const first = cal.month + "-01";
+  const nDays = new Date(y, m, 0).getDate();
+  const start = weekStart(first);
+  const cells = Math.ceil(((weekday(first) + 6) % 7 + nDays) / 7) * 7;
+  const gd = gymDates(G);
+  const rd = new Set(Object.keys(R).filter((k) => hasR(R[k])));
+  let grid = ["L", "M", "M", "G", "V", "S", "D"].map((d) => `<div class="cal-w" aria-hidden="true">${d}</div>`).join("");
+  for (let i = 0; i < cells; i++) {
+    const k = addDays(start, i), out = k.slice(0, 7) !== cal.month;
+    const g = gd.has(k), r = rd.has(k);
+    const what = [g && "palestra", r && "corsa"].filter(Boolean).join(" e ");
+    grid += `<button class="cal-d${out ? " out" : ""}${k === today ? " today" : ""}${k === cal.sel ? " sel" : ""}" data-k="${k}" aria-pressed="${k === cal.sel}" aria-label="${esc(longDate(k) + (what ? ", fatto " + what : ""))}">
+      <span class="n">${+k.slice(8)}</span><span class="dots">${g ? '<i class="d-gym"></i>' : ""}${r ? '<i class="d-run"></i>' : ""}</span></button>`;
+  }
+  // riepilogo del giorno toccato
+  const k = cal.sel, list = gymOn(k, G), e = R[k], d = D[k];
+  const rows = [];
+  if (list.length) rows.push(`<div class="row"><i class="d-gym"></i><span><b>Palestra</b> · ${esc([...new Set(list.map((x) => GYM[x.dayKey].full || GYM[x.dayKey].name))].join(" + "))} · ${list.length} esercizi${sumVol(list) ? " · volume " + fmtKg(sumVol(list)) + " kg" : ""}</span></div>`);
+  if (hasR(e)) rows.push(`<div class="row"><i class="d-run"></i><span><b>Corsa</b> · ${esc(RUN && RUN[e.s] ? RUN[e.s].name : "")} · ${esc(e.km || "–")} km${e.time ? " in " + esc(e.time) : ""}${paceOf(e) ? " · " + fmtPace(paceOf(e)) + " /km" : ""}</span></div>`);
+  if (d && d.kg) rows.push(`<div class="row"><span class="sub">Peso ${fmt1(d.kg)} kg</span></div>`);
+  if (d && (mealPct(k) || d.water)) rows.push(`<div class="row"><span class="sub">Pasti ${mealPct(k) ?? 0}% · acqua ${fmt1((d.water || 0) * 0.25)} L</span></div>`);
+  if (!list.length && !hasR(e)) { const p = plannedOn(k); rows.unshift(`<div class="row"><span class="sub">Nessun allenamento segnato.${p.length ? " In programma: " + esc(p.join(" e ")) + "." : ""}</span></div>`); }
+  const mName = MONTHS[m - 1];
+  $("sheetBody").innerHTML = `
+    <div class="cal-nav">
+      <button class="btn ghost small" data-mon="-1" aria-label="Mese precedente">◀</button>
+      <h3>${mName} ${y}</h3>
+      <button class="btn ghost small" data-mon="1" aria-label="Mese successivo">▶</button>
+    </div>
+    <div class="cal">${grid}</div>
+    <div class="cal-legend"><span><i class="d-gym"></i>Palestra</span><span><i class="d-run"></i>Corsa</span></div>
+    <section class="panel">
+      <h2>${esc(longDate(k))}</h2>
+      <div class="daysum">${rows.join("")}</div>
+      <div class="btns">
+        <button class="btn" id="calGo">Apri questo giorno</button>
+        ${list.length && TABS.palestra ? '<button class="btn ghost" id="calGym">Vedi palestra</button>' : ""}
+        ${hasR(e) && TABS.corsa ? '<button class="btn ghost" id="calRun">Vedi corsa</button>' : ""}
+        ${k !== today ? '<button class="btn ghost" id="calToday">Oggi</button>' : ""}
+      </div>
+    </section>`;
+  const body = $("sheetBody");
+  body.querySelectorAll("[data-mon]").forEach((b) => b.onclick = () => {
+    const dt = new Date(y, m - 1 + +b.dataset.mon, 1);
+    cal.month = dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0");
+    drawCalendar();
+  });
+  body.querySelector(".cal").onclick = (ev) => {
+    const b = ev.target.closest("[data-k]");
+    if (!b) return;
+    cal.sel = b.dataset.k;
+    if (cal.sel.slice(0, 7) !== cal.month) cal.month = cal.sel.slice(0, 7);
+    drawCalendar();
+  };
+  $("calGo").onclick = () => closeSheet(() => setDate(k));
+  if ($("calGym")) $("calGym").onclick = () => closeSheet(() => gotoDay(k, "palestra"));
+  if ($("calRun")) $("calRun").onclick = () => closeSheet(() => gotoDay(k, "corsa"));
+  if ($("calToday")) $("calToday").onclick = () => closeSheet(() => setDate(today));
 }
 
 // ---------- Sincronizzazione con il file sul NAS ----------
@@ -888,12 +1280,13 @@ $("syncBtn").onclick = () => { const p = $("syncPanel"); p.hidden = !p.hidden; i
 $("syncClose").onclick = () => { $("syncPanel").hidden = true; };
 
 // ---------- Data, nuovo giorno, installazione ----------
-dateEl.addEventListener("change", () => {
-  if (!dateEl.value) dateEl.value = todayKey();
+function setDate(k) {
+  dateEl.value = k || todayKey();
   if (GYM_WD[weekday(dateEl.value)]) gymDay = GYM_WD[weekday(dateEl.value)];
   runWeekOffset = 0;
   render();
-});
+}
+$("dateBtn").onclick = () => openCalendar();
 let shownToday = todayKey();
 function checkNewDay() {
   const now = todayKey();

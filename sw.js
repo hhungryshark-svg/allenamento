@@ -1,5 +1,5 @@
 // Keeps the app usable offline. Bump VERSION when the app files change.
-const VERSION = "allenamento-20261104180918";
+const VERSION = "allenamento-20261116185804";
 const CORE = ["./", "index.html", "config.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", (e) => {
