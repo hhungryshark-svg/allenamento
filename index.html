@@ -219,6 +219,24 @@ body.noscroll { overflow: hidden; }
 .mealrow:first-child { border-top: 0; }
 .mealrow .ok { color: var(--ok); font-weight: 600; } .mealrow .no { color: var(--muted); }
 
+/* Pie (donut) and goal rings */
+.msg { margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.35; }
+.donutbox { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.donut { width: 132px; height: 132px; flex: none; }
+.donut circle { fill: none; stroke-width: 24; }
+.donut .track { stroke: var(--line); opacity: .45; }
+.donut.rings circle { stroke-width: 17; stroke-linecap: round; }
+.donut.rings .rtrack { opacity: .16; }
+.donut .dc { fill: var(--fg); font: 700 46px var(--display); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.donut .dc.small { font-size: 34px; }
+.donut .ds { fill: var(--muted); font: 500 17px var(--body); text-anchor: middle; }
+.dleg { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 130px; }
+.dleg li { display: flex; align-items: center; gap: 8px; font-size: .95rem; }
+.dleg i { width: 12px; height: 12px; border-radius: 4px; flex: none; }
+.dleg span { flex: 1; color: var(--muted); }
+.dleg b { font: 700 1.25rem var(--display); font-variant-numeric: tabular-nums; }
+@media (max-width: 360px) { .donut { width: 112px; height: 112px; } }
+
 /* Calendar */
 .cal-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .cal-nav h3 { font: 700 1.3rem var(--display); text-transform: uppercase; letter-spacing: .03em; margin: 0; flex: 1; text-align: center; }
@@ -814,6 +832,15 @@ function renderStats() {
   }
   const top = Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 8), topMax = top.length ? top[0][1] : 1;
   const hasAny = gd.size || runKeys.length || Object.keys(DD).length;
+  // anelli: obiettivi della settimana
+  const goalItems = [
+    HAS.gym && { label: "Palestra", done: wkGym[7], goal: Object.keys(GYM).length, color: "var(--gym)", show: wkGym[7] + "/" + Object.keys(GYM).length },
+    HAS.run && { label: "Corsa", done: wkRun[7], goal: Object.keys(RUN).length, color: "var(--run)", show: wkRun[7] + "/" + Object.keys(RUN).length },
+    HAS.food && { label: "Pasti (7 gg)", done: meal7 || 0, goal: 100, color: "var(--food)", show: meal7 != null ? meal7 + "%" : "–" },
+  ].filter(Boolean);
+  const rg = goalItems.length ? rings(goalItems) : null;
+  const goalMsg = !rg ? "" : rg.pct >= 100 ? "Settimana completata. Tutti gli obiettivi raggiunti." : rg.pct >= 70 ? `Sei al ${rg.pct}% degli obiettivi della settimana. Ci sei quasi.` : `Sei al ${rg.pct}% degli obiettivi della settimana.`;
+  const goalsPanel = rg ? `<section class="panel"><h2>Obiettivi della settimana</h2><p class="msg">${goalMsg}</p>${rg.html}</section>` : "";
   const demoBtns = `<div class="btns"><button class="btn ghost small" data-demo="1">1 settimana</button><button class="btn ghost small" data-demo="4">1 mese</button><button class="btn ghost small" data-demo="12">3 mesi</button></div>`;
 
   $("list").innerHTML = (demo ? `
@@ -830,6 +857,7 @@ function renderStats() {
       <button class="tile t-water s-food" data-open="water"><span class="k">Acqua media</span><span class="v">${water7 ? fmt1(water7) + " L" : "–"}</span></button>
     </div>
     ${hasAny ? "" : '<p class="empty">Ancora nessun dato. Le statistiche si riempiono quando segni allenamenti, pasti e peso. Intanto puoi provare la simulazione in fondo.</p>'}
+    ${goalsPanel}
     <h3 class="sect s-train">Allenamento</h3>
     <section class="panel s-train"><h2>Allenamenti a settimana</h2><div class="sub">Obiettivo: ${[HAS.gym && Object.keys(GYM).length + " palestra", HAS.run && Object.keys(RUN).length + " corsa"].filter(Boolean).join(" + ")}</div>
       ${barChart(weeks.map((w, i) => ({ label: fmtDate(w), values: [wkGym[i], wkRun[i]] })), [{ cls: "c-gym", label: "Palestra" }, { cls: "c-run", label: "Corsa" }], { max: 6, step: 2, fmt: (v) => String(v) })}</section>
@@ -920,6 +948,72 @@ function gymOn(k, GG) {
   return out;
 }
 const sumVol = (list) => list.reduce((a, x) => a + x.vol, 0);
+
+// Torta (ciambella): segs = [{ label, value, color }]
+function donut(segs, center, sub, title) {
+  const tot = segs.reduce((a, s) => a + s.value, 0);
+  const live = segs.filter((s) => s.value > 0);
+  const gap = live.length > 1 ? 1.5 : 0;
+  let off = 0, arcs = "";
+  for (const s of live) {
+    const p = 100 * s.value / tot, len = Math.max(0.1, p - gap);
+    arcs += `<circle r="78" cx="100" cy="100" pathLength="100" stroke-dasharray="${len} ${100 - len}" stroke-dashoffset="${-off}" style="stroke:${s.color}"/>`;
+    off += p;
+  }
+  return `<div class="donutbox">
+    <svg class="donut" viewBox="0 0 200 200" role="img" aria-label="${esc(title + ": " + segs.map((s) => s.label + " " + s.value).join(", "))}">
+      <circle class="track" r="78" cx="100" cy="100"/><g transform="rotate(-90 100 100)">${arcs}</g>
+      <text class="dc" x="100" y="104">${esc(center)}</text><text class="ds" x="100" y="132">${esc(sub)}</text></svg>
+    <ul class="dleg">${segs.map((s) => `<li><i style="background:${s.color}"></i><span>${esc(s.label)}</span><b>${esc(s.show ?? s.value)}</b></li>`).join("")}</ul>
+  </div>`;
+}
+// Anelli degli obiettivi: items = [{ label, done, goal, color, show }]
+function rings(items) {
+  const R0 = [80, 58, 36];
+  const pctAll = Math.round(100 * items.reduce((a, it) => a + Math.min(1, it.goal ? it.done / it.goal : 0), 0) / items.length);
+  const svg = items.map((it, i) => {
+    const p = it.goal ? Math.min(100, 100 * it.done / it.goal) : 0;
+    return `<circle class="rtrack" r="${R0[i]}" cx="100" cy="100" style="stroke:${it.color}"/>${p > 0 ? `<circle class="rfill" r="${R0[i]}" cx="100" cy="100" pathLength="100" stroke-dasharray="${p} 100" style="stroke:${it.color}"/>` : ""}`;
+  }).join("");
+  return { pct: pctAll, html: `<div class="donutbox">
+    <svg class="donut rings" viewBox="0 0 200 200" role="img" aria-label="Obiettivi della settimana: ${pctAll}%"><g transform="rotate(-90 100 100)">${svg}</g><text class="dc small" x="100" y="109">${pctAll}%</text></svg>
+    <ul class="dleg">${items.map((it) => `<li><i style="background:${it.color}"></i><span>${esc(it.label)}</span><b>${esc(it.show)}</b></li>`).join("")}</ul>
+  </div>` };
+}
+// giorni in programma già passati (oggi conta solo se l'allenamento è già segnato)
+function countPlanned(days, test, doneOn) { const t = todayKey(); return days.filter((k) => (k < t || (k === t && doneOn(k))) && test(weekday(k))).length; }
+// Una torta per scheda, con la frase che dice com'è andata
+function breakdown(kind, days, GG, RR, DD) {
+  const shade = (p) => `color-mix(in srgb, var(--k) ${p}%, var(--card))`;
+  const box = (title, msg, html) => `<section class="panel"><h2>${title}</h2><p class="msg">${msg}</p>${html}</section>`;
+  if (kind === "gym" || kind === "run") {
+    const doneOn = kind === "gym" ? (k) => gymOn(k, GG).length > 0 : (k) => hasR(RR[k]);
+    const done = days.filter(doneOn).length;
+    const planned = kind === "gym" ? countPlanned(days, (wd) => !!GYM_WD[wd], doneOn) : countPlanned(days, (wd) => RUN && Object.values(RUN).some((x) => (x.wd || []).includes(wd)), doneOn);
+    if (!done && !planned) return "";
+    const miss = Math.max(0, planned - done), pct = planned ? Math.min(100, Math.round(100 * done / planned)) : 100;
+    const gym = kind === "gym", what = gym ? "allenamenti" : "corse", prev = gym ? "previsti" : "previste";
+    const msg = !planned ? `${done} ${what} fuori programma.` : pct >= 100 ? `${gym ? "Tutti gli allenamenti previsti fatti" : "Tutte le corse previste fatte"}${done > planned ? ", più " + (done - planned) + " extra" : ""}. Ottimo.` : pct >= 75 ? `${done} ${what} su ${planned} ${prev}. Ci sei quasi.` : `${done} ${what} su ${planned} ${prev}: ${miss} ${gym ? "saltati" : "saltate"}.`;
+    return box("Costanza", msg, donut([{ label: "Fatti", value: done, color: "var(--k)" }, { label: "Saltati", value: miss, color: "var(--line)" }], pct + "%", "costanza", "Costanza"));
+  }
+  if (kind === "meals") {
+    let ok = 0, all = 0;
+    for (const k of days) { const d = DD[k]; if (!d) continue; const ms = FOOD[dietDay(k, DD, GG, RR).type].meals; all += ms.length; ok += ms.filter((m) => (d.meals || {})[m.id]?.done).length; }
+    if (!all) return "";
+    const pct = Math.round(100 * ok / all);
+    const msg = pct >= 90 ? "Dieta rispettata quasi sempre." : pct >= 70 ? `Hai seguito ${pct} pasti su 100: buona base, si può fare meglio.` : `Solo ${pct} pasti su 100 seguiti: qui c'è margine.`;
+    return box("Pasti seguiti", msg, donut([{ label: "Fatti", value: ok, color: "var(--k)" }, { label: "Non segnati", value: all - ok, color: "var(--line)" }], pct + "%", "dei pasti", "Pasti seguiti"));
+  }
+  if (kind === "water") {
+    const ls = days.filter((k) => DD[k]).map((k) => (DD[k].water || 0) * 0.25);
+    if (!ls.length) return "";
+    const hi = ls.filter((v) => v >= 2).length, mid = ls.filter((v) => v >= 1 && v < 2).length, lo = ls.length - hi - mid;
+    const pct = Math.round(100 * hi / ls.length);
+    const msg = pct >= 80 ? "Bevi abbastanza quasi ogni giorno." : `Obiettivo dei 2 L raggiunto in ${hi} giorni su ${ls.length}.`;
+    return box("Obiettivo 2 L", msg, donut([{ label: "2 L o più", value: hi, color: "var(--k)" }, { label: "1–2 L", value: mid, color: shade(45) }, { label: "Meno di 1 L", value: lo, color: "var(--line)" }], pct + "%", "giorni ok", "Giorni con 2 L"));
+  }
+  return "";
+}
 const fmtKg = (v) => Math.round(v).toLocaleString("it-IT");
 
 // ---------- Dettagli dal resoconto ----------
@@ -1068,6 +1162,7 @@ function drawDetail() {
       <div class="sub">${det.metric === "pace" ? "Più in basso = più veloce. " : ""}Tocca un giorno nel grafico per vedere cosa hai fatto.</div>
       ${anyData ? dayChart(days, vals, { type: mi.type, cls: K0.cls, sel: det.sel, fmt: mi.fmt, selFmt: mi.sel, unit: mi.unit, max: mi.max, step: mi.step }) : `<p class="empty">Nessun dato in questo periodo.${det.range < 90 ? " Prova un periodo più lungo." : ""}</p>`}
     </section>
+    ${breakdown(det.kind, days, GG, RR, DD)}
     <section class="panel" id="dayPanel">
       <div class="dayhead">
         <button class="btn ghost small" data-step="-1" aria-label="Giorno precedente"${si <= 0 ? " disabled" : ""}>◀</button>
